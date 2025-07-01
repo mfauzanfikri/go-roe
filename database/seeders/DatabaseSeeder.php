@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Student;
+use App\Models\Tutor;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -13,11 +15,72 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $grades = ['SD', 'SMP', 'SMA'];
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Buat minimal 1 student dan 1 tutor untuk setiap grade
+        foreach ($grades as $grade) {
+            // Student
+            $studentUser = User::factory()->create([
+                'name' => "Student $grade",
+                'email' => strtolower("student_$grade@example.com"),
+            ]);
+
+            Student::factory()->create([
+                'user_id' => $studentUser->id,
+                'grade' => $grade,
+                'address' => fake()->address,
+                'phone' => fake()->phoneNumber,
+            ]);
+
+            // Tutor
+            $tutorUser = User::factory()->create([
+                'name' => "Tutor $grade",
+                'email' => strtolower("tutor_$grade@example.com"),
+            ]);
+
+            Tutor::factory()->create([
+                'user_id' => $tutorUser->id,
+                'grade' => $grade,
+                'subject' => fake()->randomElement([
+                    'Matematika', 'Bahasa Indonesia', 'Bahasa Inggris',
+                    'IPA', 'IPS', 'Fisika', 'Kimia', 'Biologi',
+                    'Ekonomi', 'Geografi', 'Sejarah', 'Sosiologi'
+                ]),
+                'address' => fake()->address,
+                'phone' => fake()->phoneNumber,
+                'teaching_days' => json_encode(['Senin', 'Rabu', 'Jumat']),
+            ]);
+        }
+
+        // Tambahan: buat random 3 student dan 3 tutor lainnya
+        User::factory()
+            ->count(3)
+            ->create()
+            ->each(function ($user) {
+                Student::factory()->create([
+                    'user_id' => $user->id,
+                    'grade' => fake()->randomElement(['SD', 'SMP', 'SMA']),
+                    'address' => fake()->address,
+                    'phone' => fake()->phoneNumber,
+                ]);
+            });
+
+        User::factory()
+            ->count(3)
+            ->create()
+            ->each(function ($user) {
+                Tutor::factory()->create([
+                    'user_id' => $user->id,
+                    'grade' => fake()->randomElement(['SD', 'SMP', 'SMA']),
+                    'subject' => fake()->randomElement([
+                        'Matematika', 'Bahasa Indonesia', 'Bahasa Inggris',
+                        'IPA', 'IPS', 'Fisika', 'Kimia', 'Biologi',
+                        'Ekonomi', 'Geografi', 'Sejarah', 'Sosiologi'
+                    ]),
+                    'address' => fake()->address,
+                    'phone' => fake()->phoneNumber,
+                    'teaching_days' => json_encode(['Selasa', 'Kamis']),
+                ]);
+            });
     }
 }

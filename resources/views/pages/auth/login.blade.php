@@ -41,6 +41,7 @@
                         name="password"
                         required>
                 </div>
+                <small class="mb-2">Belum terdaftar? <a href="{{ route('register') }}">Daftar sekarang</a></small>
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary">Login</button>
                 </div>

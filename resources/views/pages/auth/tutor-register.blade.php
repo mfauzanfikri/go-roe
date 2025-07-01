@@ -60,6 +60,20 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="days" class="form-label">Hari Mengajar</label>
+                    <select class="form-select" id="days" name="days[]" multiple required>
+                        <option value="Senin">Senin</option>
+                        <option value="Selasa">Selasa</option>
+                        <option value="Rabu">Rabu</option>
+                        <option value="Kamis">Kamis</option>
+                        <option value="Jumat">Jumat</option>
+                        <option value="Sabtu">Sabtu</option>
+                        <option value="Minggu">Minggu</option>
+                    </select>
+                    <small class="text-muted">Tekan Ctrl (Cmd di Mac) untuk memilih lebih dari satu hari</small>
+                </div>
+
+                <div class="mb-3">
                     <label for="address" class="form-label">Alamat Rumah</label>
                     <textarea class="form-control" id="address" name="address" rows="2" required></textarea>
                 </div>

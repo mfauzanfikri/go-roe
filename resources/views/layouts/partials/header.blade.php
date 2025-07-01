@@ -8,32 +8,10 @@
         <nav id="navmenu" class="navmenu">
             <ul>
                 <li><a href="{{ url('/') }}" class="active">Home</a></li>
-                <li class="dropdown"><a href="#"><span>About</span>
-                        <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                    <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Admissions</a></li>
-                        <li><a href="#">Academics</a></li>
-                        <li><a href="#">Faculty &amp; Staff</a></li>
-                        <li><a href="#">Campus &amp; Facilities</a></li>
-                    </ul>
-                </li>
-                <li><a href="#">Students Life</a></li>
-                <li><a href="#">News</a></li>
-                <li><a href="#">Events</a></li>
-                <li><a href="#">Alumni</a></li>
-                <li class="dropdown"><a href="#"><span>More Pages</span>
-                        <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                    <ul>
-                        <li><a href="#">News Details</a></li>
-                        <li><a href="#">Event Details</a></li>
-                        <li><a href="#">Privacy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                        <li><a href="#">Error 404</a></li>
-                        <li><a href="#">Starter Page</a></li>
-                    </ul>
-                </li>
-                <li><a href="#">Contact</a></li>
+                <li><a href="#program">Program</a></li>
+                <li><a href="{{ route('tutors.index') }}">Tutor Kami</a></li>
+                <li><a href="{{ route('orders.index') }}">History</a></li>
+                <li><a href="{{ route('login') }}">Login</a></li>
             </ul>
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
