@@ -56,8 +56,8 @@
                 <div id="step-1">
                     <h4 class="mb-3">Pilih Program</h4>
                     <div class="mb-3">
-                        <label for="program" class="form-label">Program</label>
-                        <select class="form-select" id="program" required>
+                        <label for="grade" class="form-label">Program</label>
+                        <select class="form-select" id="grade" required>
                             <option selected disabled>Pilih Program</option>
                             <option value="SD">SD</option>
                             <option value="SMP">SMP</option>
@@ -67,7 +67,7 @@
 
                     <div class="mb-3">
                         <label for="subject" class="form-label">Mata Pelajaran</label>
-                        <select class="form-select" id="subject" required>
+                        <select class="form-select" id="subject" name="subject" required>
                             <option selected disabled>Pilih Mata Pelajaran</option>
                             <option value="Matematika">Matematika</option>
                             <option value="Bahasa Indonesia">Bahasa Indonesia</option>
@@ -78,31 +78,24 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="hari" class="form-label">Hari</label>
-                        <select class="form-select" id="hari" required>
-                            <option selected disabled>Pilih Hari</option>
-                            @foreach(['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'] as $h)
-                                <option value="{{ $h }}">{{ $h }}</option>
-                            @endforeach
+                        <label for="date" class="form-label">Tanggal</label>
+                        <input class="form-control" type="date" name="date" id="date">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="time" class="form-label">Waktu</label>
+                        <select class="form-select" id="time" required>
+                            <option selected disabled>Pilih Waktu</option>
+                            <option value="08.00 - 10.00">08.00 - 10.00</option>
+                            <option value="13.00 - 15.00">13.00 - 15.00</option>
+                            <option value="19.00 - 21.00">19.00 - 21.00</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label for="tutor" class="form-label">Tutor</label>
-                        <select class="form-select" id="tutor" required>
+                        <select class="form-select" id="tutor" required disabled>
                             <option selected disabled>Pilih Tutor</option>
-                            <option value="Tutor A">Tutor A</option>
-                            <option value="Tutor B">Tutor B</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="waktu" class="form-label">Waktu</label>
-                        <select class="form-select" id="waktu" required>
-                            <option selected disabled>Pilih Waktu</option>
-                            <option value="08.00 - 10.00">08.00 - 10.00</option>
-                            <option value="13.00 - 15.00">13.00 - 15.00</option>
-                            <option value="19.00 - 21.00">19.00 - 21.00</option>
                         </select>
                     </div>
 
@@ -120,11 +113,11 @@
                 <div id="step-2" class="d-none">
                     <h4 class="mb-3">Konfirmasi Pilihan Anda</h4>
                     <ul class="list-group mb-3">
-                        <li class="list-group-item">Program: <strong id="cf-program"></strong></li>
+                        <li class="list-group-item">Program: <strong id="cf-grade"></strong></li>
                         <li class="list-group-item">Mata Pelajaran: <strong id="cf-subject"></strong></li>
-                        <li class="list-group-item">Hari: <strong id="cf-hari"></strong></li>
+                        <li class="list-group-item">Tanggal: <strong id="cf-date"></strong></li>
                         <li class="list-group-item">Tutor: <strong id="cf-tutor"></strong></li>
-                        <li class="list-group-item">Waktu: <strong id="cf-waktu"></strong></li>
+                        <li class="list-group-item">Waktu: <strong id="cf-time"></strong></li>
                     </ul>
                     <div class="d-flex justify-content-between">
                         <button type="button" class="btn btn-secondary" onclick="prevStep(2)">Kembali</button>
@@ -148,10 +141,12 @@
 @endsection
 
 @push('scripts')
-    {{-- <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script> --}}
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js"
+            data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
+
 
     <script>
-        const step1Fields = ['program', 'subject', 'hari', 'tutor', 'waktu'];
+        const step1Fields = ['grade', 'subject', 'date', 'tutor', 'time'];
         const step1NextBtn = document.getElementById('step1-next');
 
         // Tambahkan listener ke semua field
@@ -164,7 +159,7 @@
 
             for (const id of step1Fields) {
                 const val = document.getElementById(id).value;
-                if (!val || val === 'Pilih Program' || val === 'Pilih Mata Pelajaran' || val === 'Pilih Hari' || val === 'Pilih Tutor' || val === 'Pilih Waktu') {
+                if (!val || val === 'Pilih Program' || val === 'Pilih Mata Pelajaran' || val === 'Pilih Tanggal' || val === 'Pilih Tutor' || val === 'Pilih Waktu') {
                     valid = false;
                     break;
                 }
@@ -176,11 +171,11 @@
         function nextStep(step) {
             // Tidak perlu validasi ulang karena tombol hanya aktif jika semua valid
             if (step === 1) {
-                document.getElementById('cf-program').innerText = document.getElementById('program').value;
+                document.getElementById('cf-grade').innerText = document.getElementById('grade').value;
                 document.getElementById('cf-subject').innerText = document.getElementById('subject').value;
-                document.getElementById('cf-hari').innerText = document.getElementById('hari').value;
+                document.getElementById('cf-date').innerText = document.getElementById('date').value;
                 document.getElementById('cf-tutor').innerText = document.getElementById('tutor').value;
-                document.getElementById('cf-waktu').innerText = document.getElementById('waktu').value;
+                document.getElementById('cf-time').innerText = document.getElementById('time').value;
             }
 
             document.getElementById(`step-${step}`).classList.add('d-none');
@@ -203,33 +198,102 @@
             document.getElementById(`indicator-${step}`).classList.add('active');
         }
 
-        {{--function triggerPayment() {--}}
-        {{--    fetch("{{ route('midtrans.token') }}", {--}}
-        {{--        method: 'POST',--}}
-        {{--        headers: {--}}
-        {{--            'X-CSRF-TOKEN': "{{ csrf_token() }}",--}}
-        {{--            'Content-Type': 'application/json'--}}
-        {{--        },--}}
-        {{--        body: JSON.stringify({--}}
-        {{--            program: document.getElementById('program').value,--}}
-        {{--            subject: document.getElementById('subject').value,--}}
-        {{--            hari: document.getElementById('hari').value,--}}
-        {{--            tutor: document.getElementById('tutor').value,--}}
-        {{--            waktu: document.getElementById('waktu').value--}}
-        {{--        })--}}
-        {{--    })--}}
-        {{--        .then(res => res.json())--}}
-        {{--        .then(data => {--}}
-        {{--            if (data.snap_token) {--}}
-        {{--                snap.pay(data.snap_token);--}}
-        {{--            } else {--}}
-        {{--                alert('Token pembayaran tidak tersedia.');--}}
-        {{--            }--}}
-        {{--        })--}}
-        {{--        .catch(err => {--}}
-        {{--            alert('Gagal memproses pembayaran.');--}}
-        {{--            console.error(err);--}}
-        {{--        });--}}
-        {{--}--}}
+        function getDayName(dateStr) {
+            const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+            const dateObj = new Date(dateStr);
+            return days[dateObj.getDay()];
+        }
+
+        const tutorSelect = document.getElementById('tutor');
+        const fields = ['grade', 'subject', 'date', 'time'];
+
+        // Dengarkan perubahan di setiap field penting
+        fields.forEach(id => {
+            document.getElementById(id).addEventListener('change', handleFieldChange);
+        });
+
+        function handleFieldChange() {
+            const grade = document.getElementById('grade').value;
+            const subject = document.getElementById('subject').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+
+            const isValid = grade && subject && date && time;
+
+            // Reset dulu select tutor
+            tutorSelect.innerHTML = `<option selected disabled>Pilih Tutor</option>`;
+            tutorSelect.disabled = true;
+
+            if (!isValid) {
+                validateStep1();
+                return;
+            }
+
+            // Jika semua field sudah terisi, baru fetch tutor
+            tutorSelect.innerHTML = `<option selected disabled>Loading tutor...</option>`;
+
+            fetch("{{ route('api.available-tutors') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ grade, subject, date, time })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    tutorSelect.innerHTML = '';
+
+                    if (data.length === 0) {
+                        tutorSelect.innerHTML = `<option selected disabled>Tidak ada tutor tersedia</option>`;
+                        alert('Tidak ada tutor yang tersedia untuk jadwal tersebut.');
+                    } else {
+                        tutorSelect.innerHTML = `<option selected disabled>Pilih Tutor</option>`;
+                        data.forEach(tutor => {
+                            const option = document.createElement('option');
+                            option.value = tutor.id;
+                            option.textContent = `${tutor.name} - ${tutor.subject}`;
+                            tutorSelect.appendChild(option);
+                        });
+                        tutorSelect.disabled = false;
+                    }
+
+                    validateStep1();
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Gagal mengambil data tutor.');
+                    tutorSelect.innerHTML = `<option selected disabled>Pilih Tutor</option>`;
+                });
+        }
+
+        function triggerPayment() {
+            fetch("{{ route('midtrans.token') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    grade: document.getElementById('grade').value,
+                    subject: document.getElementById('subject').value,
+                    date: document.getElementById('date').value,
+                    tutor: document.getElementById('tutor').value,
+                    time: document.getElementById('time').value
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.snap_token) {
+                        snap.pay(data.snap_token);
+                    } else {
+                        alert('Token pembayaran tidak tersedia.');
+                    }
+                })
+                .catch(err => {
+                    alert('Gagal memproses pembayaran.');
+                    console.error(err);
+                });
+        }
     </script>
 @endpush

@@ -29,7 +29,6 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $studentUser->id,
                 'grade' => $grade,
                 'address' => fake()->address,
-                'phone' => fake()->phoneNumber,
             ]);
 
             // Tutor
@@ -47,8 +46,7 @@ class DatabaseSeeder extends Seeder
                     'Ekonomi', 'Geografi', 'Sejarah', 'Sosiologi'
                 ]),
                 'address' => fake()->address,
-                'phone' => fake()->phoneNumber,
-                'teaching_days' => json_encode(['Senin', 'Rabu', 'Jumat']),
+                'available_days' => json_encode(['Senin', 'Rabu', 'Jumat']),
             ]);
         }
 
@@ -61,7 +59,6 @@ class DatabaseSeeder extends Seeder
                     'user_id' => $user->id,
                     'grade' => fake()->randomElement(['SD', 'SMP', 'SMA']),
                     'address' => fake()->address,
-                    'phone' => fake()->phoneNumber,
                 ]);
             });
 
@@ -78,8 +75,7 @@ class DatabaseSeeder extends Seeder
                         'Ekonomi', 'Geografi', 'Sejarah', 'Sosiologi'
                     ]),
                     'address' => fake()->address,
-                    'phone' => fake()->phoneNumber,
-                    'teaching_days' => json_encode(['Selasa', 'Kamis']),
+                    'available_days' => json_encode(['Selasa', 'Kamis']),
                 ]);
             });
     }

@@ -38,6 +38,7 @@ return [
     'midtrans' => [
         'server_key' => env('MIDTRANS_SERVER_KEY'),
         'client_key' => env('MIDTRANS_CLIENT_KEY'),
-        'is_production' => false, // set true untuk production
+        'is_production' => env('MIDTRANS_PRODUCTION', false),
+        'order_id_prefix' => env('MIDTRANS_ORDER_ID_PREFIX'),
     ],
 ];

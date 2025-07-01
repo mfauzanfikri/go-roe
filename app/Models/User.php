@@ -13,8 +13,6 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'role',
-        'grade',
-        'subject',
         'address',
         'email',
         'phone',
@@ -25,4 +23,17 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function student()
+    {
+        return $this->hasOne(Student::class);
+    }
+
+    /**
+     * Relasi ke model Tutor.
+     */
+    public function tutor()
+    {
+        return $this->hasOne(Tutor::class);
+    }
 }

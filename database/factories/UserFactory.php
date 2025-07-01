@@ -13,10 +13,6 @@ class UserFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'role' => $role,
-            'grade' => $this->faker->randomElement(['SD', 'SMP', 'SMA']),
-            'subject' => $role === 'tutor' ? $this->faker->randomElement([
-                'Matematika', 'Bahasa Indonesia', 'Bahasa Inggris', 'IPA', 'IPS'
-            ]) : null,
             'address' => $this->faker->address(),
             'email' => $this->faker->unique()->safeEmail(),
             'phone' => $this->faker->phoneNumber(),

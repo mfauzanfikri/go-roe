@@ -22,6 +22,7 @@
             <h3 class="mb-3 text-center">Login</h3>
             <form method="POST" action="{{ route('login') }}">
                 @csrf
+
                 <div class="mb-3">
                     <label for="email" class="form-label">Email address</label>
                     <input

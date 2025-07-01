@@ -14,6 +14,7 @@ class Tutor extends Model
         'grade',
         'subject',
         'available_days',
+        'description',
         'address',
     ];
 

@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->enum('role', ['student', 'tutor']);
-            $table->string('grade')->nullable(); // SD, SMP, SMA
-            $table->string('subject')->nullable(); // khusus tutor
             $table->text('address')->nullable();
             $table->string('email')->unique();
             $table->string('phone')->nullable();

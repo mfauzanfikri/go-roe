@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->string('grade'); // SD, SMP, SMA
             $table->string('subject'); // Ex: Matematika
             $table->json('available_days'); // Simpan array nama hari (Senin, Selasa, dst.)
+            $table->text('description')->nullable();
             $table->text('address');
             $table->timestamps();
         });

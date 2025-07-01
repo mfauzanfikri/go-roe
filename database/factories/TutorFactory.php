@@ -23,6 +23,7 @@ class TutorFactory extends Factory
                 ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
                 rand(2, 5)
             ),
+            'description' => $this->faker->paragraph(5),
             'address' => $this->faker->address,
         ];
     }

@@ -27,37 +27,60 @@
 
                 <div class="mb-3">
                     <label for="name" class="form-label">Nama Lengkap</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
+                    <input type="text" class="form-control @error('name') is-invalid @enderror"
+                           id="name" name="name" value="{{ old('name') }}" required>
+                    @error('name')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
                     <label for="grade" class="form-label">Tingkat Sekolah</label>
-                    <select class="form-select" id="grade" name="grade" required>
+                    <select class="form-select @error('grade') is-invalid @enderror" id="grade" name="grade" required>
                         <option selected disabled>Pilih tingkat</option>
-                        <option value="SD">SD</option>
-                        <option value="SMP">SMP</option>
-                        <option value="SMA">SMA</option>
+                        <option value="SD" {{ old('grade') === 'SD' ? 'selected' : '' }}>SD</option>
+                        <option value="SMP" {{ old('grade') === 'SMP' ? 'selected' : '' }}>SMP</option>
+                        <option value="SMA" {{ old('grade') === 'SMA' ? 'selected' : '' }}>SMA</option>
                     </select>
+                    @error('grade')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
                     <label for="address" class="form-label">Alamat Rumah</label>
-                    <textarea class="form-control" id="address" name="address" rows="2" required></textarea>
+                    <textarea class="form-control @error('address') is-invalid @enderror"
+                              id="address" name="address" rows="2" required>{{ old('address') }}</textarea>
+                    @error('address')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
+                    <input type="email" class="form-control @error('email') is-invalid @enderror"
+                           id="email" name="email" value="{{ old('email') }}" required>
+                    @error('email')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
                     <label for="phone" class="form-label">Nomor Handphone</label>
-                    <input type="text" class="form-control" id="phone" name="phone" required>
+                    <input type="text" class="form-control @error('phone') is-invalid @enderror"
+                           id="phone" name="phone" value="{{ old('phone') }}" required>
+                    @error('phone')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
                     <label for="password" class="form-label">Kata Sandi</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
+                    <input type="password" class="form-control @error('password') is-invalid @enderror"
+                           id="password" name="password" required>
+                    @error('password')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-2">
