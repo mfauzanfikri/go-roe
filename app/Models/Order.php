@@ -20,15 +20,27 @@ class Order extends Model
         'status',
     ];
 
-    public function student()
+    public function studentUser()
     {
         return $this->belongsTo(User::class, 'student_id');
     }
 
-    public function tutor()
+    public function student()
+    {
+        return $this->hasOne(Student::class, 'user_id', 'student_id');
+    }
+
+
+    public function tutorUser()
     {
         return $this->belongsTo(User::class, 'tutor_id');
     }
+
+    public function tutor()
+    {
+        return $this->hasOne(Tutor::class, 'user_id', 'tutor_id');
+    }
+
 
     public function payment()
     {

@@ -22,8 +22,8 @@ class OrderController extends Controller
         $user = auth()->user();
 
         $orders = Order::with(['student', 'tutor', 'payment'])
-            ->when($user->role === 'tutor', fn($q) => $q->where('tutor_id', $user->id))
-            ->when($user->role === 'student', fn($q) => $q->where('student_id', $user->id))
+            ->when($user->role === 'tutor', fn($q) => $q->where('tutor_id', $user->tutor->id))
+            ->when($user->role === 'student', fn($q) => $q->where('student_id', $user->student  ->id))
             ->latest()
             ->get();
 
@@ -151,37 +151,48 @@ class OrderController extends Controller
     public function processMidtrans(Request $request)
     {
         $request->validate([
-            'order_id' => 'required|exists:orders,id',
-            'transaction_status' => 'required|in:settlement,capture',
-            'payment_type' => 'required',
-            'gross_amount' => 'required|numeric',
-            'transaction_id' => 'required',
-            'snap_token' => 'nullable',
+            'grade' => 'required|in:SD,SMP,SMA',
+            'subject' => 'required|string',
+            'date' => 'required|date',
+            'time' => 'required|string',
+            'tutor' => 'required|exists:tutors,id',
+            'payment' => 'required|in:system',
+            'midtrans_result' => 'required|array',
         ]);
 
-        $order = Order::findOrFail($request->order_id);
-        $tutor = $order->tutor;
+        $user = auth()->user();
 
-        $amount = (int)$request->gross_amount;
+        $midtrans = $request->midtrans_result;
+
+        $order = \App\Models\Order::create([
+            'student_id' => $user->student->id,
+            'tutor_id' => $request->tutor,
+            'grade' => $request->grade,
+            'subject' => $request->subject,
+            'date' => $request->date,
+            'day' => Carbon::parse($request->date)->translatedFormat('l'), // Contoh: "Senin"
+            'time' => $request->time,
+            'status' => 'paid',
+            'program' => $request->grade,
+        ]);
+
+        $amount = (int) $midtrans['gross_amount'];
         $systemFee = $amount * 0.05;
         $netAmount = $amount - $systemFee;
-
-        // Update order dan pembayaran
-        $order->update(['status' => 'paid']);
 
         $order->payment()->create([
             'method' => 'system',
             'amount' => $amount,
             'status' => 'paid',
-            'transaction_id' => $request->transaction_id,
-            'snap_token' => $request->snap_token,
-            'transaction_status' => $request->transaction_status,
-            'fraud_status' => $request->fraud_status ?? null,
+            'transaction_id' => $midtrans['transaction_id'] ?? null,
+            'snap_token' => $midtrans['token'] ?? null,
+            'transaction_status' => $midtrans['transaction_status'] ?? null,
+            'fraud_status' => $midtrans['fraud_status'] ?? null,
             'paid_at' => now(),
         ]);
 
-        // Tambah saldo tutor setelah dikurangi fee
-        $tutor->increment('balance', $netAmount);
+        // Berikan saldo ke tutor
+        $order->tutor->increment('balance', $netAmount);
 
         return response()->json(['success' => true]);
     }
@@ -195,7 +206,7 @@ class OrderController extends Controller
         $fee = $order->total_amount * 0.05;
 
         // Generate Snap Token Midtrans
-        $snapToken = Midtrans::createSnapToken([
+        $snapToken = Snap::getSnapToken([
             'transaction_details' => [
                 'order_id' => 'FEE-' . $order->id . '-' . uniqid(),
                 'gross_amount' => $fee,
