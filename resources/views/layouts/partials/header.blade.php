@@ -12,7 +12,7 @@
                 <li><a href="{{ route('tutors.index') }}">Tutor Kami</a></li>
                 @if(auth()->user())
                     <li><a href="{{ route('orders.index') }}">History</a></li>
-                    @if(auth()->user()->role === 'tutor')
+                    @if(auth()->user()->role === 'student')
                         <li><a href="{{ route('orders.new-order') }}">Pesan</a></li>
                     @endif
                     <li class="dropdown"><a href=""
