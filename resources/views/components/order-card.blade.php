@@ -1,5 +1,21 @@
 @props(['subject', 'date', 'time', 'tutor', 'student', 'status', 'orderId', 'userRole', 'payment'])
 
+@php
+    use Carbon\Carbon;
+
+    $now = Carbon::now();
+    $sessionDate = Carbon::parse($date);
+    $isToday = $now->isSameDay($sessionDate);
+
+    // Parse time range (misal: "13.00 - 15.00")
+    [$startTimeStr, $endTimeStr] = explode(' - ', $time);
+    $startTime = Carbon::parse($date . ' ' . str_replace('.', ':', $startTimeStr));
+    $endTime = Carbon::parse($date . ' ' . str_replace('.', ':', $endTimeStr));
+
+    $canStart = $isToday && $now->between($startTime, $endTime);
+    $canComplete = $isToday && $now->gt($endTime);
+@endphp
+
 <div class="card shadow-sm mb-4">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-start mb-3">
@@ -31,35 +47,45 @@
         </div>
 
         {{-- Action hanya tutor yang bisa --}}
-        @if($userRole === 'tutor')
-            <div class="text-end">
-                @switch($status)
-                    @case('paid')
-                        @if($payment->method === 'cod')
-                            <button class="btn btn-sm btn-primary" onclick="payFee({{ $orderId }})">Bayar Fee</button>
-                        @else
+        <div class="text-end">
+            @switch($status)
+
+                {{-- Tutor harus bayar fee jika COD --}}
+                @case('paid')
+                    @if($userRole === 'tutor' && $payment->method === 'cod')
+                        <button class="btn btn-sm btn-primary" onclick="payFee({{ $orderId }})">Bayar Fee</button>
+                    @endif
+                    @break
+
+                    {{-- Tutor hanya bisa mulai jika fee sudah dibayar --}}
+                @case('fee_paid')
+                    @if($userRole === 'tutor')
+                        @if($canStart)
                             <form action="{{ route('orders.start', $orderId) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-sm btn-success">Mulai</button>
                             </form>
+                        @else
+                            <span class="text-muted small">Belum waktunya memulai sesi.</span>
                         @endif
-                        @break
+                    @endif
+                    @break
 
-                    @case('fee_paid')
-                        <form action="{{ route('orders.start', $orderId) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-success">Mulai</button>
-                        </form>
-                        @break
+                    {{-- Student bisa selesaikan jika waktu sudah selesai --}}
+                @case('learning')
+                    @if($userRole === 'student')
+                        @if($canComplete)
+                            <form action="{{ route('orders.complete', $orderId) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-success">Selesaikan</button>
+                            </form>
+                        @else
+                            <span class="text-muted small">Sesi belum selesai.</span>
+                        @endif
+                    @endif
+                    @break
 
-                    @case('learning')
-                        <form action="{{ route('orders.complete', $orderId) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-success">Selesaikan</button>
-                        </form>
-                        @break
-                @endswitch
-            </div>
-        @endif
+            @endswitch
+        </div>
     </div>
 </div>
