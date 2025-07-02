@@ -8,11 +8,15 @@
         <nav id="navmenu" class="navmenu">
             <ul>
                 <li><a href="{{ url('/') }}">Home</a></li>
-                <li><a href="#program">Program</a></li>
+                <li><a href="{{ url('/') }}#program">Program</a></li>
                 <li><a href="{{ route('tutors.index') }}">Tutor Kami</a></li>
                 @if(auth()->user())
                     <li><a href="{{ route('orders.index') }}">History</a></li>
-                    <li class="dropdown"><a href="" onclick="event.preventDefault()"><span>{{ auth()->user()->name }}</span>
+                    @if(auth()->user()->role === 'tutor')
+                        <li><a href="{{ route('orders.new-order') }}">Pesan</a></li>
+                    @endif
+                    <li class="dropdown"><a href=""
+                                            onclick="event.preventDefault()"><span>{{ auth()->user()->name }}</span>
                             <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
                             @if(auth()->user()->role === 'tutor')
