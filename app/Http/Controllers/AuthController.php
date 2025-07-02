@@ -127,7 +127,7 @@ class AuthController extends Controller
             'subject' => $request->subject,
             'description' => $request->description,
             'address' => $request->address,
-            'available_days' => json_encode($request->available_days),
+            'available_days' => $request->available_days,
         ]);
 
         auth()->login($user);

@@ -22,12 +22,26 @@ Route::group(['prefix' => 'tutors'], function() {
     Route::get('/details', [TutorController::class, 'details'])->name('tutors.details');
 });
 
-Route::group(['prefix' => 'orders'], function() {
-    Route::get('/', [OrderController::class, 'index'])->name('orders.index');
-    Route::get('/create', [OrderController::class, 'newOrder'])->name('orders.new-order');
+Route::middleware('auth')->group(function() {
+    Route::group(['prefix' => 'orders'], function() {
+        Route::get('/', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('/create', [OrderController::class, 'newOrder'])->name('orders.new-order');
 
-    Route::post('/midtrans/token', [OrderController::class, 'getMidtransToken'])->name('midtrans.token');
+        Route::post('/midtrans/token', [OrderController::class, 'getMidtransToken'])->name('midtrans.token');
+
+        Route::post('/process/cod', [OrderController::class, 'processCod'])->name('orders.process-cod');
+        Route::post('/process/midtrans', [OrderController::class, 'processMidtrans'])->name('orders.process-midtrans');
+
+        Route::post('/{order}/fee-token', [OrderController::class, 'getFeeSnapToken'])->name('orders.fee-token');
+        Route::post('/{order}/fee-callback', [OrderController::class, 'feeCallback'])->name('orders.fee-callback');
+
+        Route::post('/{order}/start', [OrderController::class, 'start'])->name('orders.start');
+        Route::post('/{order}/complete', [OrderController::class, 'complete'])->name('orders.complete');
+
+    });
+
+    Route::post('/api/available-tutors', [OrderController::class, 'getAvailableTutors'])->name('api.available-tutors');
 });
 
-Route::post('/api/available-tutors', [OrderController::class, 'getAvailableTutors'])->name('api.available-tutors');
+
 

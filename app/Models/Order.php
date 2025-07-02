@@ -29,5 +29,10 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'tutor_id');
     }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class, 'order_id');
+    }
 }
 

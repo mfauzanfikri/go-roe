@@ -22,29 +22,79 @@
     <!-- Starter Section Section -->
     <section class="section">
         <div class="container">
-            <div class="row mb-4 justify-content-center">
-                <div class="col-2 px-1">
-                    <input class="form-control" type="date" name="date" id="date">
-                </div>
-                <div class="col-1 px-1">
-                    <button class="btn btn-primary">Filter</button>
-                </div>
-            </div>
+            {{-- <div class="row mb-4 justify-content-center"> --}}
+            {{--     <div class="col-2 px-1"> --}}
+            {{--         <input class="form-control" type="date" name="date" id="date"> --}}
+            {{--     </div> --}}
+            {{--     <div class="col-1 px-1"> --}}
+            {{--         <button class="btn btn-primary">Filter</button> --}}
+            {{--     </div> --}}
+            {{-- </div> --}}
 
-            @for($i = 0; $i < 10; $i++)
+            @foreach($orders as $order)
                 <div class="row">
                     <div class="col-12">
                         <x-order-card
-                            subject="Bahasa Inggris"
-                            date="Senin, 8 Juli 2025"
-                            time="08.00 - 10.00"
-                            tutor="Tutor A"
-                            student="Siswa X"
-                            status="learning"
+                            :subject="$order->subject"
+                            :date="\Carbon\Carbon::parse($order->date)->isoFormat('dddd, D MMMM Y')"
+                            :time="$order->time"
+                            :tutor="$order->tutor->name ?? '-'"
+                            :student="$order->student->name ?? '-'"
+                            :status="$order->status"
+                            :orderId="$order->id"
+                            :userRole="auth()->user()->role"
+                            :payment="$order->payment"
                         />
                     </div>
                 </div>
-            @endfor
+            @endforeach
+
         </div>
     </section><!-- /Starter Section Section -->
 @endsection
+
+@push('scripts')
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js"
+            data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
+
+    <script>
+        function payFee(orderId) {
+            fetch(`/orders/${orderId}/fee-token`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                    'Content-Type': 'application/json'
+                }
+            })
+              .then(res => res.json())
+              .then(data => {
+                  if (data.snap_token) {
+                      snap.pay(data.snap_token, {
+                          onSuccess: function(result) {
+                              // Setelah berhasil, update status ke paid
+                              fetch(`/orders/${orderId}/fee-callback`, {
+                                  method: 'POST',
+                                  headers: {
+                                      'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                                      'Content-Type': 'application/json'
+                                  }
+                              })
+                                .then(r => r.json())
+                                .then(resp => {
+                                    if (resp.success) {
+                                        location.reload();
+                                    }
+                                });
+                          },
+                          onError: function(err) {
+                              alert('Pembayaran gagal.');
+                              console.error(err);
+                          }
+                      });
+                  } else {
+                      alert('Gagal mendapatkan token pembayaran fee.');
+                  }
+              });
+        }
+    </script>
+@endpush

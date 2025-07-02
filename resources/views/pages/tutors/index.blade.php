@@ -23,61 +23,66 @@
         <!-- Section Title -->
         <div class="container section-title">
             <h2>Our Tutors</h2>
-            <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
         </div><!-- End Section Title -->
 
         <div class="container">
-            <div class="row mb-4 justify-content-center">
-                <div class="col-3 px-1">
-                    <input type="text" class="form-control" id="search" placeholder="Search tutor...">
+            <form method="GET" action="{{ route('tutors.index') }}">
+                <div class="row mb-4 justify-content-center">
+                    <div class="col-3 px-1">
+                        <input type="text" class="form-control" name="search" placeholder="Search tutor..."
+                               value="{{ request('search') }}">
+                    </div>
+                    <div class="col-2 px-1">
+                        <select class="form-select" name="subject">
+                            <option value="">All Subjects</option>
+                            @foreach($subjects as $subject)
+                                <option value="{{ $subject }}" {{ request('subject') == $subject ? 'selected' : '' }}>
+                                    {{ $subject }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-1 px-1">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </div>
                 </div>
-                <div class="col-2 px-1">
-                    <select class="form-select">
-                        <option selected>Subject</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                    </select>
-                </div>
-                <div class="col-1 px-1">
-                    <button class="btn btn-primary">Filter</button>
-                </div>
-            </div>
+            </form>
 
             <div class="row justify-content-center gap-2" style="margin-top: 2.5rem">
-                @for($i = 0; $i < 10; $i++)
+                @forelse($tutors as $tutor)
                     <div class="col-3 card">
                         <div class="card-body px-1">
                             <div class="row">
                                 <div class="col-12 d-flex justify-content-center align-items-center">
-                                    <div>
-                                        <img src="{{ url('/assets/img/profile.jpg') }}"
-                                             alt=""
-                                             class="rounded-circle"
-                                             style="width: 150px; height: 150px; object-fit: cover;">
-                                    </div>
+                                    <img src="{{ url('/assets/img/profile.jpg') }}"
+                                         alt=""
+                                         class="rounded-circle"
+                                         style="width: 150px; height: 150px; object-fit: cover;">
                                 </div>
                                 <div class="col-12 mt-2">
                                     <div class="row">
                                         <div class="col-12 text-center">
-                                            <p class="m-0 fw-bold">Nama</p>
-                                            <p class="m-0">Program - Mapel</p>
+                                            <p class="m-0 fw-bold">{{ $tutor->user->name }}</p>
+                                            <p class="m-0">{{ $tutor->grade }} - {{ $tutor->subject }}</p>
                                         </div>
                                         <div class="col-12 mt-4">
-                                            <p class="m-0">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse natus optio perferendis praesentium provident repellendus sit tempore ullam ut! Amet deserunt, est nostrum optio quaerat quasi quos ullam velit veritatis?
+                                            <p class="m-0 text-muted" style="font-size: 0.9rem">
+                                                {{ Str::limit($tutor->description, 150) }}
                                             </p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="col-12 mt-4 mb-2 d-flex justify-content-center">
-                                    <button class="btn btn-primary">Bimbingan Sekarang</button>
+                                    <a href="{{ route('orders.new-order') }}"
+                                       class="btn btn-primary btn-sm">Bimbingan Sekarang</a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                @endfor
+                @empty
+                    <p class="text-center">Tidak ada tutor ditemukan.</p>
+                @endforelse
             </div>
         </div>
 

@@ -16,6 +16,7 @@ class Tutor extends Model
         'available_days',
         'description',
         'address',
+        'balance'
     ];
 
     protected $casts = [

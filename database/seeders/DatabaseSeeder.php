@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
                     'Ekonomi', 'Geografi', 'Sejarah', 'Sosiologi'
                 ]),
                 'address' => fake()->address,
-                'available_days' => json_encode(['Senin', 'Rabu', 'Jumat']),
+                'available_days' => ['Senin', 'Rabu', 'Jumat'],
             ]);
         }
 
@@ -75,7 +75,7 @@ class DatabaseSeeder extends Seeder
                         'Ekonomi', 'Geografi', 'Sejarah', 'Sosiologi'
                     ]),
                     'address' => fake()->address,
-                    'available_days' => json_encode(['Selasa', 'Kamis']),
+                    'available_days' => ['Selasa', 'Kamis'],
                 ]);
             });
     }

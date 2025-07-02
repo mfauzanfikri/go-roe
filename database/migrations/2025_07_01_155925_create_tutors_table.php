@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->string('subject'); // Ex: Matematika
             $table->json('available_days'); // Simpan array nama hari (Senin, Selasa, dst.)
             $table->text('description')->nullable();
+            $table->float('balance')->default(0);
             $table->text('address');
             $table->timestamps();
         });

@@ -10,11 +10,17 @@
                 <li><a href="{{ url('/') }}">Home</a></li>
                 <li><a href="#program">Program</a></li>
                 <li><a href="{{ route('tutors.index') }}">Tutor Kami</a></li>
-                <li><a href="{{ route('orders.index') }}">History</a></li>
                 @if(auth()->user())
+                    <li><a href="{{ route('orders.index') }}">History</a></li>
                     <li class="dropdown"><a href="" onclick="event.preventDefault()"><span>{{ auth()->user()->name }}</span>
                             <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
+                            @if(auth()->user()->role === 'tutor')
+                                <li>
+                                    Balance: {{ auth()->user()->balance }}
+                                </li>
+                            @endif
+
                             <li>
                                 <form action="{{ route('logout') }}" method="post">
                                     @csrf

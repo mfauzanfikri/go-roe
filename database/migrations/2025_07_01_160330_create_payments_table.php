@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
-            $table->string('method'); // contoh: midtrans, transfer
+            $table->enum('method', ['cod', 'system']);
             $table->integer('amount');
             $table->string('status'); // pending, success, failed
             $table->string('transaction_id')->nullable(); // Midtrans transaction_id

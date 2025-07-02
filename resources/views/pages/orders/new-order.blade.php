@@ -29,7 +29,6 @@
          style="background-image: url({{ asset('assets/img/page-title-bg.webp') }});">
         <div class="container position-relative">
             <h1>Pesan Bimbingan <br></h1>
-            <p>Esse dolorum voluptatum ullam est sint nemo et est ipsa porro placeat quibusdam quia assumenda numquam molestias.</p>
             <nav class="breadcrumbs">
                 <ol>
                     <li><a href="{{ route('home') }}">Home</a></li>
@@ -69,11 +68,9 @@
                         <label for="subject" class="form-label">Mata Pelajaran</label>
                         <select class="form-select" id="subject" name="subject" required>
                             <option selected disabled>Pilih Mata Pelajaran</option>
-                            <option value="Matematika">Matematika</option>
-                            <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-                            <option value="Bahasa Inggris">Bahasa Inggris</option>
-                            <option value="IPA">IPA</option>
-                            <option value="IPS">IPS</option>
+                            @foreach($subjects as $subject)
+                                <option value="{{ $subject }}">{{ $subject }}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -99,6 +96,15 @@
                         </select>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="payment" class="form-label">Pembayaran</label>
+                        <select class="form-select" id="payment" required>
+                            <option selected disabled>Pilih Pembayaran</option>
+                            <option value="cod">COD</option>
+                            <option value="system">Online</option>
+                        </select>
+                    </div>
+
                     <div class="d-flex justify-content-end">
                         <button type="button"
                                 class="btn btn-primary"
@@ -118,6 +124,7 @@
                         <li class="list-group-item">Tanggal: <strong id="cf-date"></strong></li>
                         <li class="list-group-item">Tutor: <strong id="cf-tutor"></strong></li>
                         <li class="list-group-item">Waktu: <strong id="cf-time"></strong></li>
+                        <li class="list-group-item">Pembayaran: <strong id="cf-payment"></strong></li>
                     </ul>
                     <div class="d-flex justify-content-between">
                         <button type="button" class="btn btn-secondary" onclick="prevStep(2)">Kembali</button>
@@ -129,10 +136,21 @@
                 <div id="step-3" class="d-none">
                     <h4 class="mb-3">Pembayaran</h4>
                     <p>Biaya Les: <strong>Rp100.000</strong></p>
-                    <p>Metode pembayaran akan diproses melalui Midtrans.</p>
-                    <div class="d-flex justify-content-between">
-                        <button type="button" class="btn btn-secondary" onclick="prevStep(3)">Kembali</button>
-                        <button type="button" class="btn btn-success" onclick="triggerPayment()">Bayar Sekarang</button>
+                    <div id="system" class="d-none">
+                        <p>Metode pembayaran akan diproses melalui Midtrans.</p>
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" onclick="prevStep(3)">Kembali</button>
+                            <button type="button"
+                                    class="btn btn-success"
+                                    onclick="triggerPayment()">Bayar Sekarang
+                            </button>
+                        </div>
+                    </div>
+                    <div id="cod" class="d-none">
+                        <button type="button"
+                                class="btn btn-success"
+                                onclick="processOrder()">Buat pesanan
+                        </button>
                     </div>
                 </div>
             </div>
@@ -146,7 +164,7 @@
 
 
     <script>
-        const step1Fields = ['grade', 'subject', 'date', 'tutor', 'time'];
+        const step1Fields = ['grade', 'subject', 'date', 'tutor', 'time', 'payment'];
         const step1NextBtn = document.getElementById('step1-next');
 
         // Tambahkan listener ke semua field
@@ -157,9 +175,9 @@
         function validateStep1() {
             let valid = true;
 
-            for (const id of step1Fields) {
+            for(const id of step1Fields) {
                 const val = document.getElementById(id).value;
-                if (!val || val === 'Pilih Program' || val === 'Pilih Mata Pelajaran' || val === 'Pilih Tanggal' || val === 'Pilih Tutor' || val === 'Pilih Waktu') {
+                if(!val || val === 'Pilih Program' || val === 'Pilih Mata Pelajaran' || val === 'Pilih Tanggal' || val === 'Pilih Tutor' || val === 'Pilih Waktu') {
                     valid = false;
                     break;
                 }
@@ -169,13 +187,19 @@
         }
 
         function nextStep(step) {
-            // Tidak perlu validasi ulang karena tombol hanya aktif jika semua valid
             if (step === 1) {
                 document.getElementById('cf-grade').innerText = document.getElementById('grade').value;
                 document.getElementById('cf-subject').innerText = document.getElementById('subject').value;
                 document.getElementById('cf-date').innerText = document.getElementById('date').value;
                 document.getElementById('cf-tutor').innerText = document.getElementById('tutor').value;
                 document.getElementById('cf-time').innerText = document.getElementById('time').value;
+                document.getElementById('cf-payment').innerText = document.getElementById('payment').value;
+            }
+
+            if (step === 2) {
+                const method = document.getElementById('payment').value;
+                document.getElementById('system').classList.toggle('d-none', method !== 'system');
+                document.getElementById('cod').classList.toggle('d-none', method !== 'cod');
             }
 
             document.getElementById(`step-${step}`).classList.add('d-none');
@@ -192,14 +216,14 @@
         }
 
         function updateStepIndicator(step) {
-            for (let i = 1; i <= 3; i++) {
+            for(let i = 1; i <= 3; i++) {
                 document.getElementById(`indicator-${i}`).classList.remove('active');
             }
             document.getElementById(`indicator-${step}`).classList.add('active');
         }
 
         function getDayName(dateStr) {
-            const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
             const dateObj = new Date(dateStr);
             return days[dateObj.getDay()];
         }
@@ -218,9 +242,14 @@
             const date = document.getElementById('date').value;
             const time = document.getElementById('time').value;
 
-            const isValid = grade && subject && date && time;
+            const invalidValues = ['Pilih Program', 'Pilih Mata Pelajaran', 'Pilih Tanggal', 'Pilih Tutor', 'Pilih Waktu'];
 
-            // Reset dulu select tutor
+            const isValid = grade && subject && date && time &&
+                !invalidValues.includes(grade) &&
+                !invalidValues.includes(subject) &&
+                !invalidValues.includes(time);
+
+            // Reset select tutor dulu
             tutorSelect.innerHTML = `<option selected disabled>Pilih Tutor</option>`;
             tutorSelect.disabled = true;
 
@@ -229,7 +258,7 @@
                 return;
             }
 
-            // Jika semua field sudah terisi, baru fetch tutor
+            // Fetch tutor hanya jika semua field valid
             tutorSelect.innerHTML = `<option selected disabled>Loading tutor...</option>`;
 
             fetch("{{ route('api.available-tutors') }}", {
@@ -279,13 +308,28 @@
                     subject: document.getElementById('subject').value,
                     date: document.getElementById('date').value,
                     tutor: document.getElementById('tutor').value,
-                    time: document.getElementById('time').value
+                    time: document.getElementById('time').value,
+                    payment: 'system'
                 })
             })
                 .then(res => res.json())
                 .then(data => {
                     if (data.snap_token) {
-                        snap.pay(data.snap_token);
+                        snap.pay(data.snap_token, {
+                            onSuccess: function(result) {
+                                // Panggil server untuk konfirmasi pembayaran dan buat order
+                                processMidtrans(result);
+                            },
+                            onPending: function(result) {
+                                alert('Transaksi belum selesai.');
+                            },
+                            onError: function(result) {
+                                alert('Pembayaran gagal.');
+                            },
+                            onClose: function() {
+                                alert('Pembayaran dibatalkan.');
+                            }
+                        });
                     } else {
                         alert('Token pembayaran tidak tersedia.');
                     }
@@ -293,6 +337,69 @@
                 .catch(err => {
                     alert('Gagal memproses pembayaran.');
                     console.error(err);
+                });
+        }
+
+        function processMidtrans(paymentResult) {
+            fetch("{{ route('orders.process-midtrans') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    grade: document.getElementById('grade').value,
+                    subject: document.getElementById('subject').value,
+                    date: document.getElementById('date').value,
+                    time: document.getElementById('time').value,
+                    tutor: document.getElementById('tutor').value,
+                    payment: 'system',
+                    midtrans_result: paymentResult
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Pesanan berhasil dibuat.');
+                        window.location.href = "{{ route('home') }}";
+                    } else {
+                        alert('Gagal menyimpan pesanan.');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Terjadi kesalahan saat menyimpan pesanan.');
+                });
+        }
+
+        function processOrder() {
+            fetch("{{ route('orders.process-cod') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    grade: document.getElementById('grade').value,
+                    subject: document.getElementById('subject').value,
+                    date: document.getElementById('date').value,
+                    time: document.getElementById('time').value,
+                    tutor: document.getElementById('tutor').value,
+                    payment: 'cod'
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Pesanan berhasil dibuat dengan metode COD.');
+                        window.location.href = "{{ route('home') }}";
+                    } else {
+                        alert('Gagal membuat pesanan.');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Terjadi kesalahan.');
                 });
         }
     </script>
